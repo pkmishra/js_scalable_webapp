@@ -1,6 +1,5 @@
-
-The Scalable JavaScript Application framework
-http://eric-brechemier.github.com/lb_js_scalableApp/
+JavaScript Scalable Architecture
+http://manakor.github.com/javascript-scalable-architecture/
 
 LANGUAGES
 
