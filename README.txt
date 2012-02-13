@@ -1,5 +1,5 @@
-JavaScript Scalable Architecture
-http://manakor.github.com/javascript-scalable-architecture/
+ManakorJS is JavaScript Scalable Architecture that could be used as a core for projects based on encapsulated modules.
+http://manakor.github.com/manakorJS/
 
 LANGUAGES
 
