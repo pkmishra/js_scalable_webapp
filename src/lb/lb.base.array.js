@@ -32,9 +32,11 @@ define([
 		// Parameters:
 		//   array - array, the array to modify in place
 		//   item - any, the new item to insert at end, unless already present
-
-		if (jQuery.inArray(item, array) >= 0) {
-			jQuery(array).append(item);
+		
+		var length = array.length;
+		
+		if (array && jQuery.inArray(item, array) === -1) {
+			array[length] = item;
 		}
 	}
 
