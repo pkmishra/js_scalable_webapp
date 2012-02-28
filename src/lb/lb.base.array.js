@@ -3,56 +3,55 @@
  * Array Adapter Module for Base Library
  *
  * Authors:
- *   o Eric Bréchemier <github@eric.brechemier.name>
- *   o Marc Delhommeau <marc.delhommeau@legalbox.com>
+ *   o Nik Sumeiko, http://manakor.org
  *
  * Copyright:
- * Eric Bréchemier (c) 2011, Some Rights Reserved
- * Legal-Box SAS (c) 2010-2011, All Rights Reserved
+ * Nik Sumeiko (c) 2011, All Rights Reserved
  *
  * License:
  * BSD License
  * http://creativecommons.org/licenses/BSD/
  *
  * Version:
- * 2011-08-14
+ * 2012-02-28
  */
 /*global define */
-define(
-  [
-    "./lb.base",
-    "closure/goog.array"
-  ],
-  function(
-    lbBase,
-    gArray
-  ) {
+define([
+	"./lb.base"
+], function (
+	lbBase
+) {
+	"use strict";
+	
+	var jQuery = lbBase.jQuery;
+	
+	function addOne(array, item) {
+		// Function: addOne(array, item)
+		// Add an item to the array, only once (no duplicates allowed).
+		//
+		// Parameters:
+		//   array - array, the array to modify in place
+		//   item - any, the new item to insert at end, unless already present
 
-    function addOne(array, item){
-      // Function: addOne(array, item)
-      // Add an item to the array, only once (no duplicates allowed).
-      //
-      // Parameters:
-      //   array - array, the array to modify in place
-      //   item - any, the new item to insert at end, unless already present
+		if (jQuery.inArray(item, array) >= 0) {
+			jQuery(array).append(item);
+		}
+	}
 
-      gArray.insert(array, item);
-    }
+	function removeOne(array, item) {
+		// Function: removeOne(array, item])
+		// Remove the first occurence of an item from the given array.
+		// The identity operator === is used for the comparison.
+		//
+		// Parameters:
+		//   array - array, the array to modify in place
+		//   item - any, the item to remove
+		//
+		// Note:
+		// Duplicates are not removed.
 
-    function removeOne(array, item){
-      // Function: removeOne(array, item])
-      // Remove the first occurence of an item from the given array.
-      // The identity operator === is used for the comparison.
-      //
-      // Parameters:
-      //   array - array, the array to modify in place
-      //   item - any, the item to remove
-      //
-      // Note:
-      // Duplicates are not removed.
-
-      gArray.remove(array,item);
-    }
+		gArray.remove(array,item);
+	}
 
     function removeAll(array){
       // Function: removeAll(array)
