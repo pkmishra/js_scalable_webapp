@@ -16,6 +16,7 @@
  */
 
 /*jslint vars:true */
+<<<<<<< HEAD
 /*global define, test, stop, start, ok, equal, notEqual, strictEqual, notStrictEqual, deepEqual, notDeepEqual, raises */
 define([
 	"lb/lb.base"
@@ -36,4 +37,32 @@ define([
 	return {
 		run: run
 	};
+=======
+/*global define, test, ok, equal */
+define([
+	"lb/lb.base"
+], function (
+	base
+) {
+	"use strict";
+	
+	
+	function testjQuery() {
+		test("jQuery", function () {
+			var jQuery = base.jQuery;
+			
+			ok(jQuery, "jQuery is not defined");
+		});
+	}
+	
+	function run() {
+		testjQuery();
+	}
+
+	var tests = {
+		run: run
+	};
+	
+	return tests;
+>>>>>>> branch 'master' of git@github.com:manakor/manakorJS
 });
