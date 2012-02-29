@@ -32,15 +32,15 @@ define([
 		// Parameters:
 		//   array - array, the array to modify in place
 		//   item - any, the new item to insert at end, unless already present
-
-		if (jQuery.inArray(item, array) >= 0) {
-			jQuery(array).append(item);
+		
+		if (jQuery.inArray(item, array) === -1) { 
+			array.push(item);
 		}
 	}
 
 	function removeOne(array, item) {
 		// Function: removeOne(array, item])
-		// Remove the first occurence of an item from the given array.
+		// Remove the first occurrence of an item from the given array.
 		// The identity operator === is used for the comparison.
 		//
 		// Parameters:
@@ -49,52 +49,60 @@ define([
 		//
 		// Note:
 		// Duplicates are not removed.
+		
+		var pos = jQuery.inArray(item, array);
 
-		gArray.remove(array,item);
+		if (pos !== -1) {
+			array.splice(pos, 1);
+		}
 	}
 
-    function removeAll(array){
-      // Function: removeAll(array)
-      // Remove all items from the array.
+	function removeAll(array) {
+		// Function: removeAll(array)
+		// Remove all items from the array.
 
-      gArray.clear(array);
-    }
+		array.splice(0);
+	}
 
-    function copy(array){
-      // Function: copy(array): array
-      // Copy an array.
-      //
-      // Parameter:
-      //   array - array, the array to copy
-      //
-      // Returns:
-      //   array, a shallow copy of given array
+	function copy(array) {
+		// Function: copy(array): array
+		// Copy an array.
+		//
+		// Parameter:
+		//   array - array, the array to copy
+		//
+		// Returns:
+		//   array, a shallow copy of given array
 
-      return gArray.clone(array);
-    }
+		return jQuery.extend(true, [], array);
+	}
 
-    function toArray(pseudoArray){
-      // Function: toArray(pseudoArray): array
-      // Convert a pseudo-array to an array.
-      //
-      // Parameter:
-      //   pseudoArray - object, a pseudo-array such as function arguments
-      //
-      // Returns:
-      //   array, the pseudo-array converted to a new array instance
+	function toArray(pseudoArray) {
+		// Function: toArray(pseudoArray): array
+		// Convert a pseudo-array to an array.
+		//
+		// Parameter:
+		//   pseudoArray - object, a pseudo-array such as function arguments
+		//
+		// Returns:
+		//   array, the pseudo-array converted to a new array instance
+		var arr = [];
+		
+		jQuery.each(pseudoArray, function (index, value) {
+			arr.push(value);
+		});
+		
+		return arr;
+	}
 
-      return gArray.toArray(pseudoArray);
-    }
-
-    // Assign to lb.base.array
-    // for backward-compatibility in browser environment$
-    lbBase.array = { // public API
-      addOne: addOne,
-      removeOne: removeOne,
-      removeAll: removeAll,
-      copy: copy,
-      toArray: toArray
-    };
-    return lbBase.array;
-  }
-);
+	// Assign to lb.base.array
+	// for backward-compatibility in browser environment$
+	lbBase.array = { // public API
+		addOne: addOne,
+		removeOne: removeOne,
+		removeAll: removeAll,
+		copy: copy,
+		toArray: toArray
+	};
+	return lbBase.array;
+});
