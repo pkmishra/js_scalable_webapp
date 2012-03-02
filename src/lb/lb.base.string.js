@@ -3,54 +3,48 @@
  * String Adapter Module for Base Library
  *
  * Authors:
- * o Eric Bréchemier <github@eric.brechemier.name>
- * o Marc Delhommeau <marc.delhommeau@legalbox.com>
+ * o Nik Sumeiko, http://manakor.org
  *
  * Copyright:
- * Eric Bréchemier (c) 2011, Some Rights Reserved
- * Legal-Box SAS (c) 2010-2011, All Rights Reserved
+ * Nik Sumeiko (c) 2012, All Rights Reserved
  *
  * License:
  * BSD License
  * http://creativecommons.org/licenses/BSD/
  *
  * Version:
- * 2011-08-14
+ * 2012-03-01
  */
 /*global define */
-define(
-  [
-    "./lb.base",
-    "closure/goog.string"
-  ],
-  function(
-    lbBase,
-    string
-  ) {
+define([
+	"./lb.base"
+], function (
+	lbBase
+) {
+	"use strict";
 
     // Declare alias
-    var gTrim = string.trim;
+	var jQuery = lbBase.jQuery;
 
-    function trim(string){
-      // Function: trim(string): string
-      // Remove white space from the start and end of the string.
-      //
-      // Parameter:
-      //   string - string, a string
-      //
-      // Returns:
-      //   a string with whitespace removed from start and end.
-      //   The whitespace within is neither removed nor normalized.
+	function trim(string) {
+		// Function: trim(string): string
+		// Remove white space from the start and end of the string.
+		//
+		// Parameter:
+		//   string - string, a string
+		//
+		// Returns:
+		//   a string with whitespace removed from start and end.
+		//   The whitespace within is neither removed nor normalized.
 
-      return gTrim(string);
-    }
+		return jQuery.trim(string);
+	}
 
-    // Assign to lb.base.string
-    // for backward-compatibility in browser environment
-    lbBase.string = { // public API
-      trim: trim
-    };
-
-    return lbBase.string;
-  }
-);
+	// Assign to lb.base.string
+	// for backward-compatibility in browser environment
+	lbBase.string = { // public API
+		trim: trim
+	};
+	
+	return lbBase.string;
+});

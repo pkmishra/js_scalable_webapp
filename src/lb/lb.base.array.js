@@ -33,15 +33,8 @@ define([
 		//   array - array, the array to modify in place
 		//   item - any, the new item to insert at end, unless already present
 		
-<<<<<<< HEAD
 		if (jQuery.inArray(item, array) === -1) { 
 			array.push(item);
-=======
-		var length = array.length;
-		
-		if (array && jQuery.inArray(item, array) === -1) {
-			array[length] = item;
->>>>>>> branch 'master' of git@github.com:manakor/manakorJS
 		}
 	}
 

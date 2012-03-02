@@ -29,212 +29,140 @@
  * o <initElement(element)>
  *
  * Authors:
- * o Eric Bréchemier <github@eric.brechemier.name>
- * o Marc Delhommeau <marc.delhommeau@legalbox.com>
+ * o Nik Sumeiko, http://manakor.org
  *
  * Copyright:
- * Eric Bréchemier (c) 2011, Some Rights Reserved
- * Legal-Box SAS (c) 2010-2011, All Rights Reserved
+ * Nik Sumeiko (c) 2012, All Rights Reserved
  *
  * License:
  * BSD License
  * http://creativecommons.org/licenses/BSD/
  *
  * Version:
- * 2011-08-14
+ * 2012-03-01
  */
 /*global define */
-define(
-  [
-    "./lb.base.dom",
-    "closure/goog.dom",
-    "closure/goog.events",
-    "closure/goog.events.Event",
-    "./lb.base.dom.Listener",
-    "./lb.base.array"
-  ],
-  function(
-    lbBaseDom,
-    googDom,
-    events,
-    Event,
-    Listener,
-    array
-  ) {
+define([
+    "./lb.base",
+	"./lb.base.dom"
+], function (
+	lbBase,
+	lbBaseDom
+) {
+	"use strict";
 
-    // Declare aliases
-    var createDom = googDom.createDom,
-        removeElement = googDom.removeNode,
-        fireListeners = events.fireListeners,
-        toArray = array.toArray;
+	// Declare aliases
+	var jQuery = lbBase.jQuery;
+	
+	// Function: initElement(element)
+	// (optional) Customize a newly inserted element.
+	// Not implemented in the base factory.
+	//
+	// The method differs from createElement which is responsible for the
+	// actual creation of the element node and is called before the node is
+	// inserted in the DOM. On the contrary, this method will be called on
+	// elements already part of the DOM.
+	//
+	// When available on the configured factory, this method is currently called
+	// before a module starts, with the box element at the root of the module.
+	// It is also intended to get called in a template engine, to be added in a
+	// future version of the library, after inserting new contents in the box.
+	//
+	// A custom factory may, for example, iterate recursively on the children
+	// of the given element, creating Rich Internet Application widgets when
+	// expected CSS classes are found on an element.
+	//
+	// Parameter:
+	//   element - DOM Element, an element part of the document.
+	
+	function createElement(tag, attributes) {
+		// Function: createElement(tag[,attributes[,childNodes]]): DOM Element
+		// Create a new element with given name, attributes and child nodes.
+		//
+		// Parameters:
+		//   tag - string, the name of the element, e.g. 'div'
+		//   attributes - object, the set of attributes, 
+		//                e.g. {id:'myDiv', 'class':'big box'}
+		//   childNodes - array or list, the list of child nodes.
+		//                The child nodes may be provided as an array,
+		//                or as a list of arguments (after name and attributes).
+		//
+		// Returns:
+		//   DOM Element, the newly created element
+		
+		var el,
+			args = arguments,
+			l = args.length;
+		
+		if (l === 1) {
+			el = jQuery("<" + tag + "/>");
+		
+		} else if (l === 2) {
+			el = jQuery("<" + tag + "/>", attributes);
+		
+		//} else if (l === 3) {
+		// TODO: Not sure, how exactly nested nodes are going to be passed,
+		// need to work-out a solution for that
+		}
+		
+		return el;
+	}
+	
+	function destroyElement(el) {
+		// Function: destroyElement(element)
+		// Terminate usage of a DOM element by removing it from its parent.
+		//
+		// Parameter:
+		//   element - DOM element, an element (with or without parent)
+		//
+		// Note:
+		// Nothing happens in case the element has no parent.
 
-    // Function: initElement(element)
-    // (optional) Customize a newly inserted element.
-    // Not implemented in the base factory.
-    //
-    // The method differs from createElement which is responsible for the
-    // actual creation of the element node and is called before the node is
-    // inserted in the DOM. On the contrary, this method will be called on
-    // elements already part of the DOM.
-    //
-    // When available on the configured factory, this method is currently called
-    // before a module starts, with the box element at the root of the module.
-    // It is also intended to get called in a template engine, to be added in a
-    // future version of the library, after inserting new contents in the box.
-    //
-    // A custom factory may, for example, iterate recursively on the children
-    // of the given element, creating Rich Internet Application widgets when
-    // expected CSS classes are found on an element.
-    //
-    // Parameter:
-    //   element - DOM Element, an element part of the document.
-
-    function createElement(name,attributes){
-      // Function: createElement(name[,attributes[,childNodes]]): DOM Element
-      // Create a new element with given name, attributes and child nodes.
-      //
-      // Parameters:
-      //   name - string, the name of the element, e.g. 'div'
-      //   attributes - object, the set of attributes, 
-      //                e.g. {id:'myDiv', 'class':'big box'}
-      //   childNodes - array or list, the list of child nodes.
-      //                The child nodes may be provided as an array,
-      //                or as a list of arguments (after name and attributes).
-      //
-      // Returns:
-      //   DOM Element, the newly created element
-
-      // clone arguments before modifying - avoid changing function arguments
-      // http://tech.groups.yahoo.com/group/jslint_com/message/11
-      var args = toArray(arguments);
-
-      // convert name to uppercase to ensure cross-browser consistency
-      // (IE keeps original case for unknown nodeName/tagName)
-      if (args[0] && args[0].toUpperCase){
-        args[0] = args[0].toUpperCase();
-      }
-
-      return createDom.apply(this,args);
-    }
-
-    function destroyElement(element){
-      // Function: destroyElement(element)
-      // Terminate usage of a DOM element by removing it from its parent.
-      //
-      // Parameter:
-      //   element - DOM element, an element (with or without parent)
-      //
-      // Note:
-      // Nothing happens in case the element has no parent.
-
-      removeElement(element);
-    }
-
-    function createListener(element, type, callback, useCapture){
-      // Function: createListener(element, type, callback[, useCapture])
-      // Create a new listener for a type of event on a DOM element.
-      //
-      // Parameters:
-      //   element - DOM Element, an element
-      //   type - string, the name of an event (without 'on') e.g. 'click'
-      //   callback - function, a function to call when the event is dispatched.
-      //   useCapture - boolean, whether the callback is set for capture phase.
-      //                Optional: defaults to false. See [1] for details.
-      //
-      // Returns:
-      //   object, a new instance of <lb.base.dom.Listener>
-      //
-      // Reference:
-      //   [1] DOM Level 2 Events: addEventListener
-      //   <http://bit.ly/9SQoL4>
-
-      return new Listener(element, type, callback, useCapture);
-    }
-
-    function destroyListener(listener){
-      // Function: destroyListener(listener)
-      // Terminate a listener by removing it from the target DOM element.
-      //
-      // Parameter:
-      //   listener - object, the listener returned by createListener,
-      //              instance of <lb.base.dom.Listener>
-
-      listener.detach();
-    }
-
-    function createEvent(element, type, properties, useCapture){
-      // Function: createEvent(element, type[, properties[, useCapture]])
-      // Create a new DOM event and fire it on given target element.
-      //
-      // Parameters:
-      //   element - DOM element, the target element for the event dispatch
-      //   type - string, the name of an event (without 'on') e.g. 'click'
-      //   properties - object, optional properties to set to the new event.
-      //   useCapture - boolean, whether the callback is set for capture phase.
-      //                Optional: defaults to false. See [1] for details.
-      //
-      // Returns:
-      //   object, the new DOM Event [2] created
-      //
-      // References:
-      //   [1] DOM Level 2 Events: addEventListener
-      //   <http://bit.ly/9SQoL4>
-      //
-      //   [2] DOM Level 2 Events: Event interface
-      //   <http://bit.ly/b7KwF5>
-      useCapture = useCapture || false;
-
-      // Note: event is actually an instance of goog.events.Event.
-      // We may define our own wrapper instead if needed.
-      var event = new Event(type),
-          name;
-      for (name in properties){
-        if ( properties.hasOwnProperty(name) ){
-          event[name] = properties[name];
-        }
-      }
-      fireListeners(element,type,useCapture,event);
-      return event;
-    }
-
-    function destroyEvent(event){
-      // Function: destroyEvent(event)
-      // Terminate a DOM event: prevent default action and stop propagation.
-      //
-      // Nothing happens in case the event is undefined, or lacks both of the
-      // expected stopPropagation() and preventDefault() methods. In case only
-      // one of the methods is missing, the other will get called.
-      //
-      // Parameter:
-      //   event - object, the DOM Event [1]
-      //
-      // Reference:
-      //   [1] DOM Level 2 Events: Event interface
-      //   <http://bit.ly/b7KwF5>
-      if (!event){
-        return;
-      }
-
-      if (event.stopPropagation){
-        event.stopPropagation();
-      }
-
-      if (event.preventDefault){
-        event.preventDefault();
-      }
-    }
-
-    // Assign to lb.base.dom.factory
-    // for backward-compatibility in browser environment
-     lbBaseDom.factory = { // public API
-      createElement: createElement,
-      destroyElement: destroyElement,
-      createListener: createListener,
-      destroyListener: destroyListener,
-      createEvent: createEvent,
-      destroyEvent: destroyEvent
-    };
-
-    return lbBaseDom.factory;
-  }
-);
+		jQuery(el).remove();
+	}
+	
+	function createListener(el, type, callback) {
+		// Function: createListener(element, type, callback[, useCapture])
+		// Create a new listener for a type of event on a DOM element.
+		//
+		// Parameters:
+		//   element - DOM Element, an element
+		//   type - string, the name of an event (without 'on') e.g. 'click'
+		//   callback - function, a function to call when the event is dispatched.
+		//   useCapture - boolean, whether the callback is set for capture phase.
+		//                Optional: defaults to false. See [1] for details.
+		//
+		// Returns:
+		//   object, a new instance of <lb.base.dom.Listener>
+		//
+		// Reference:
+		//   [1] DOM Level 2 Events: addEventListener
+		//   <http://bit.ly/9SQoL4>
+		
+		jQuery(el).on(type, callback);
+	}
+	
+	function destroyListener(el, type) {
+		// Function: destroyListener(el, type)
+		// Terminate a listener by removing it from the target DOM element.
+		//
+		// Parameter:
+		
+		if (type) {
+			jQuery(el).off(type);
+		} else {
+			jQuery(el).off();
+		}
+	}
+	
+	//	Assign to lb.base.dom.factory
+	//	for backward-compatibility in browser environment
+	lbBaseDom.factory = { // public API
+		createElement: createElement,
+		destroyElement: destroyElement,
+		createListener: createListener,
+		destroyListener: destroyListener
+	};
+	
+	return lbBaseDom.factory;
+});
