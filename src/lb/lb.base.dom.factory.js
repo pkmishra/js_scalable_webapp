@@ -54,45 +54,8 @@ define([
 	// Declare aliases
 	var jQuery = lbBase.jQuery;
 	
-	// Function: initElement(element)
-	// (optional) Customize a newly inserted element.
-	// Not implemented in the base factory.
-	//
-	// The method differs from createElement which is responsible for the
-	// actual creation of the element node and is called before the node is
-	// inserted in the DOM. On the contrary, this method will be called on
-	// elements already part of the DOM.
-	//
-	// When available on the configured factory, this method is currently called
-	// before a module starts, with the box element at the root of the module.
-	// It is also intended to get called in a template engine, to be added in a
-	// future version of the library, after inserting new contents in the box.
-	//
-	// A custom factory may, for example, iterate recursively on the children
-	// of the given element, creating Rich Internet Application widgets when
-	// expected CSS classes are found on an element.
-	//
-	// Parameter:
-	//   element - DOM Element, an element part of the document.
-	
 	function createElement(tag, attributes) {
-		// Function: createElement(tag[,attributes[,childNodes]]): DOM Element
-		// Create a new element with given name, attributes and child nodes.
-		//
-		// Parameters:
-		//   tag - string, the name of the element, e.g. 'div'
-		//   attributes - object, the set of attributes, 
-		//                e.g. {id:'myDiv', 'class':'big box'}
-		//   childNodes - array or list, the list of child nodes.
-		//                The child nodes may be provided as an array,
-		//                or as a list of arguments (after name and attributes).
-		//
-		// Returns:
-		//   DOM Element, the newly created element
-		
-		var el,
-			args = arguments,
-			l = args.length;
+		var el, args = arguments, l = args.length;
 		
 		if (l === 1) {
 			el = jQuery("<" + tag + "/>");
@@ -122,32 +85,10 @@ define([
 	}
 	
 	function createListener(el, type, callback) {
-		// Function: createListener(element, type, callback[, useCapture])
-		// Create a new listener for a type of event on a DOM element.
-		//
-		// Parameters:
-		//   element - DOM Element, an element
-		//   type - string, the name of an event (without 'on') e.g. 'click'
-		//   callback - function, a function to call when the event is dispatched.
-		//   useCapture - boolean, whether the callback is set for capture phase.
-		//                Optional: defaults to false. See [1] for details.
-		//
-		// Returns:
-		//   object, a new instance of <lb.base.dom.Listener>
-		//
-		// Reference:
-		//   [1] DOM Level 2 Events: addEventListener
-		//   <http://bit.ly/9SQoL4>
-		
 		jQuery(el).on(type, callback);
 	}
 	
 	function destroyListener(el, type) {
-		// Function: destroyListener(el, type)
-		// Terminate a listener by removing it from the target DOM element.
-		//
-		// Parameter:
-		
 		if (type) {
 			jQuery(el).off(type);
 		} else {
@@ -155,11 +96,17 @@ define([
 		}
 	}
 	
+	function destroyAllListeners(scope, types) {
+		jQuery(scope).off(types, "*");
+	}
+	
+	
 	//	Assign to lb.base.dom.factory
 	//	for backward-compatibility in browser environment
 	lbBaseDom.factory = { // public API
 		createElement: createElement,
 		destroyElement: destroyElement,
+		destroyAllListeners: destroyAllListeners,
 		createListener: createListener,
 		destroyListener: destroyListener
 	};

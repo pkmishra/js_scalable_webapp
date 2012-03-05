@@ -15,14 +15,15 @@
  * http://creativecommons.org/licenses/BSD/
  *
  * Version:
- * 2011-08-14
+ * 2012-03-02
  */
 /*global define */
-define(
-  [
-    "./lb"
-  ],
-  function(lb) {
+define([
+	"./lb"
+], function (
+	lb
+) {
+	"use strict";
 
     // Note: no methods defined at this level currently
 
@@ -32,5 +33,4 @@ define(
     };
 
     return lb.core;
-  }
-);
+});

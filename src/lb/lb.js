@@ -15,22 +15,23 @@
  * http://creativecommons.org/licenses/BSD/
  *
  * Version:
- * 2011-08-14
+ * 2012-03-03
  */
 /*global define, window */
-define(function() {
+define(function () {
+	"use strict";
 
-  // Note: no methods defined at this level currently
-
-  var undef, // undefined value, for safe comparison
-      lb = { // public API
-      };
-
-  // initialize global variable lb in browser environment,
-  // for backward-compatibility
-  if (window !== undef){
-    window.lb = lb;
-  }
-
-  return lb;
+	// Note: no methods defined at this level currently
+	
+	var undef, // undefined value, for safe comparison
+		lb = { // public API
+		};
+	
+	// initialize global variable lb in browser environment,
+	// for backward-compatibility
+	if (window !== undef) {
+		window.lb = lb;
+	}
+	
+	return lb;
 });

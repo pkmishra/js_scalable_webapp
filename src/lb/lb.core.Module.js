@@ -21,163 +21,166 @@
  * http://creativecommons.org/licenses/BSD/
  *
  * Version:
- * 2011-08-14
+ * 2012-03-02
  */
 /*global define */
-define(
-  [
-    "./lb.core",
-    "./lb.base.type",
-    "./lb.base.log",
-    "./lb.base.dom.factory",
-    "./lb.core.plugins.builder",
-    "./lb.base.config",
-    "./lb.base.dom"
-  ],
-  function(
-    lbCore,
-    type,
-    logModule,
-    defaultFactory,
-    defaultBuilder,
-    config,
-    dom
-  ) {
+define([
+	"./lb.core",
+	"./lb.base.type",
+	"./lb.base.log",
+	"./lb.base.dom.factory",
+	"./lb.core.plugins.builder",
+	"./lb.base.config",
+	"./lb.base.dom"
+], function (
+	lbCore,
+	type,
+	logModule,
+	defaultFactory,
+	defaultBuilder,
+	config,
+	dom
+) {
+	"use strict";
 
-    // Assign to lb.core.Module
-    // for backward-compatibility in browser environment
-    lbCore.Module = function (id, creator) {
-      // Function: new Module(id,creator): Module
-      // Constructor of a new Core Module.
-      //
-      // Parameters:
-      //   id - string, the module identifier, e.g. 'lb.ui.myModule'
-      //   creator - function, a creator function returning a custom module.
-      //             A new Sandbox instance will be provided as parameter.
-      //
-      // Returns:
-      //   object, the new instance of Module
-      //
-      // Notes:
-      // Creator functions for User Interface modules may be registered in the
-      // namespace 'lb.ui', e.g. lb.ui.myModule while creator functions for Data
-      // modules, with no user interface,  may be registered in the namespace
-      // 'lb.data', e.g. lb.data.myModule.
-      //
-      // The sandbox API can be customized by configuring a different builder
-      // to load additional or alternative plugins. See <lb.core.plugins.builder>
-      // for details.
+	// Assign to lb.core.Module
+	// for backward-compatibility in browser environment
+	lbCore.Module = function (id, creator) {
+		// Function: new Module(id,creator): Module
+		// Constructor of a new Core Module.
+		//
+		// Parameters:
+		//   id - string, the module identifier, e.g. 'lb.ui.myModule'
+		//   creator - function, a creator function returning a custom module.
+		//             A new Sandbox instance will be provided as parameter.
+		//
+		// Returns:
+		//   object, the new instance of Module
+		//
+		// Notes:
+		// Creator functions for User Interface modules may be registered in the
+		// namespace 'lb.ui', e.g. lb.ui.myModule while creator functions for Data
+		// modules, with no user interface,  may be registered in the namespace
+		// 'lb.data', e.g. lb.data.myModule.
+		//
+		// The sandbox API can be customized by configuring a different builder
+		// to load additional or alternative plugins. See <lb.core.plugins.builder>
+		// for details.
 
-      // Define aliases
-      var is = type.is,
-          log = logModule.print,
-          getOption = config.getOption,
-          $ = dom.$,
+		// Define aliases
+		var is = type.is,
+			log = logModule.print,
+			getOption = config.getOption,
+			q = dom.q,
 
-      // Private fields
+			// Private fields
+	
+			// object, the underlying module instance
+			module,
+	
+			// object, the sandbox object
+			sandbox;
 
-      // object, the underlying module instance
-          module,
+		try {
+			sandbox = getOption("lbBuilder", defaultBuilder).buildSandbox(id);
+			module = creator(sandbox);
+		} catch (creationError) {
+			log('ERROR: failed to create module "' + id +
+				'" using creator "' + String(creator) +
+				'"; ' + creationError);
+		}
 
-      // object, the sandbox object
-          sandbox;
+		function getId() {
+			// Function: getId(): string
+			// Get the module identifier.
+			//
+			// Returns:
+			//   string, the module identifier, as given in contructor.
 
-      try {
-        sandbox = getOption('lbBuilder',defaultBuilder).buildSandbox(id);
-        module = creator(sandbox);
-      } catch(creationError){
-        log('ERROR: failed to create module "'+id+
-            '" using creator "'+String(creator)+
-            '"; '+creationError);
-      }
+			return id;
+		}
 
-      function getId(){
-        // Function: getId(): string
-        // Get the module identifier.
-        //
-        // Returns:
-        //   string, the module identifier, as given in contructor.
+		function getSandbox() {
+			// Function: getSandbox(): object
+			// Get the sandbox allocated to the module.
+			//
+			// Returns:
+			//   object, the module's sandbox.
 
-        return id;
-      }
+			return sandbox;
+		}
 
-      function getSandbox(){
-        // Function: getSandbox(): object
-        // Get the sandbox allocated to the module.
-        //
-        // Returns:
-        //   object, the module's sandbox.
+		function start() {
+			// Function: start()
+			// Create and start the underlying module.
+			//
+			// Notes:
+			// * the start method is optional on the underlying module; it will not be
+			//   called when omitted.
+			// * before starting the module, the initElement() method is triggered on
+			//   the configured factory with the box element of the module as argument,
+			//   if a custom factory has been configured which supports the method and
+			//   the box is present in the document.
 
-        return sandbox;
-      }
+			var customFactory = getOption("lbFactory"),
+				box;
+			
+			if (is(customFactory, "initElement", "function")) {
+				box = getSandbox().getBox(false);
+				if (is(box)) {
+					// possible extension point for the initialization of widgets
+					customFactory.initElement(box);
+				}
+			}
 
-      function start(){
-        // Function: start()
-        // Create and start the underlying module.
-        //
-        // Notes:
-        // * the start method is optional on the underlying module; it will not be
-        //   called when omitted.
-        // * before starting the module, the initElement() method is triggered on
-        //   the configured factory with the box element of the module as argument,
-        //   if a custom factory has been configured which supports the method and
-        //   the box is present in the document.
+			if (!is(module, "start", "function")) {
+				return;
+			}
 
-        var customFactory = getOption('lbFactory'),
-            box;
-        if ( is(customFactory,'initElement','function') ){
-          box = getSandbox().getBox(false);
-          if ( is(box) ){
-            // possible extension point for the initialization of widgets
-            customFactory.initElement(box);
-          }
-        }
+			try {
+				module.start();
+			} catch (startError) {
+				log('ERROR: Failed to start module "' + id + '"; ' + startError + '.');
+			}
+		}
 
-        if ( !is(module,'start','function') ){
-          return;
-        }
+		function end() {
+			// Function: end()
+			// Terminate the underlying module.
+			//
+			// Note:
+			// The end() method is optional on the underlying module; it will not be
+			// called when omitted. In any case, removeAllListeners() will be called on
+			// the sandbox to cleanup any remaining DOM listeners, and destroyElement()
+			// will be called on the configured factory to terminate the box element
+			// and any widgets included within.
 
-        try {
-          module.start();
-        } catch(startError){
-          log('ERROR: Failed to start module "'+id+'"; '+startError+'.');
-        }
-      }
+			try {
+				if (is(module, "end", "function")) {
+					module.end();
+				}
+				sandbox.dom.removeAllListeners();
+				
+				/*
+				var box = q("#" + sandbox.getId()),
+					factory = getOption("lbFactory", defaultFactory);
+				
+				if (is(box) && is(factory, "destroyElement", "function")) {
+					factory.destroyElement(box);
+				}
+				*/
+			} catch (endError) {
+				log('ERROR: Failed to end module "' + id + '"; ' + endError + '.');
+			}
+		}
 
-      function end(){
-        // Function: end()
-        // Terminate the underlying module.
-        //
-        // Note:
-        // The end() method is optional on the underlying module; it will not be
-        // called when omitted. In any case, removeAllListeners() will be called on
-        // the sandbox to cleanup any remaining DOM listeners, and destroyElement()
-        // will be called on the configured factory to terminate the box element
-        // and any widgets included within.
-
-        try {
-          if ( is(module,'end','function') ){
-            module.end();
-          }
-          sandbox.dom.removeAllListeners();
-          var box = $( sandbox.getId() ),
-              factory = getOption('lbFactory',defaultFactory);
-          if ( is(box) && is(factory,'destroyElement','function') ){
-            factory.destroyElement(box);
-          }
-        } catch(endError){
-          log('ERROR: Failed to end module "'+id+'"; '+endError+'.');
-        }
-      }
-
-      // Public methods
-      this.getId = getId;
-      this.toString = getId;
-      this.getSandbox = getSandbox;
-      this.start = start;
-      this.end = end;
-    };
+		// Public methods
+		this.getId = getId;
+		this.toString = getId;
+		this.getSandbox = getSandbox;
+		this.start = start;
+		this.end = end;
+	};
 
     return lbCore.Module;
-  }
-);
+});

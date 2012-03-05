@@ -15,21 +15,22 @@
  * http://creativecommons.org/licenses/BSD/
  *
  * Version:
- * 2011-08-14
+ * 2012-03-03
  */
 /*global define */
-define(
-  [
-    "./lb"
-  ],
-  function(lb) {
-
-  // Note: no methods defined at this level currently
-
-  // Assign to lb.data
-  // for backward-compatibility in browser environment
-  lb.data = { // public API
-  };
-
-  return lb.data;
+define([
+	"./lb"
+], function (
+	lb
+) {
+	"use strict";
+	
+	// Note: no methods defined at this level currently
+	
+	// Assign to lb.data
+	// for backward-compatibility in browser environment
+	lb.data = { // public API
+	};
+	
+	return lb.data;
 });

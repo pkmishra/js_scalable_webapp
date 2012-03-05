@@ -26,7 +26,7 @@ define([
 	// Declare alias
 	var jQuery = lbBase.jQuery;
 	
-	function q(selector) {
+	function q(selector, scope) {
 		// Function: $(selector): DOM Element(s)
 		//
 		// Parameter:
@@ -38,6 +38,10 @@ define([
 		//
 		// Note: 
 		//   Returned element(s) are not instances of jQuery, but just DOM elements
+		
+		if (scope) {
+			return jQuery(selector, scope).get();
+		}
 
 		return jQuery(selector).get();
 	}

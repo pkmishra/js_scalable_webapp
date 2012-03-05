@@ -3,11 +3,11 @@
  * Core Plugins which define API methods for the Sandbox.
  *
  * Authors:
- *   o Eric Bréchemier <github@eric.brechemier.name>
+ *   o Eric Brechemier <github@eric.brechemier.name>
  *   o Marc Delhommeau <marc.delhommeau@legalbox.com>
  *
  * Copyright:
- * Eric Bréchemier (c) 2011, Some Rights Reserved
+ * Eric Brechemier (c) 2011, Some Rights Reserved
  * Legal-Box SAS (c) 2010-2011, All Rights Reserved
  *
  * License:
@@ -15,14 +15,15 @@
  * http://creativecommons.org/licenses/BSD/
  *
  * Version:
- * 2011-08-14
+ * 2012-03-03
  */
 /*global define */
-define(
-  [
-    "./lb.core"
-  ],
-  function(lbCore) {
+define([
+	"./lb.core"
+], function (
+	lbCore
+) {
+	"use strict";
 
     // Note: no methods defined at this level currently
 
@@ -32,5 +33,4 @@ define(
     };
 
     return lbCore.plugins;
-  }
-);
+});

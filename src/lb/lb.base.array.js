@@ -94,6 +94,14 @@ define([
 		
 		return arr;
 	}
+	
+	function toString(array, separator) {
+		if (separator) {
+			return array.join(separator);
+		}
+		
+		return array.join();
+	}
 
 	// Assign to lb.base.array
 	// for backward-compatibility in browser environment$
@@ -102,7 +110,8 @@ define([
 		removeOne: removeOne,
 		removeAll: removeAll,
 		copy: copy,
-		toArray: toArray
+		toArray: toArray,
+		toString: toString
 	};
 	return lbBase.array;
 });

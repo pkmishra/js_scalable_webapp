@@ -44,77 +44,73 @@
  * http://creativecommons.org/licenses/BSD/
  *
  * Version:
- * 2011-08-14
+ * 2012-03-02
  */
 /*global define */
-define(
-  [
-    "./lb.core.plugins",
-    "./lb.base.object",
-    "./lb.core.Sandbox",
-    "./lb.core.plugins.css",
-    "./lb.core.plugins.dom",
-    "./lb.core.plugins.events",
-    "./lb.core.plugins.i18n",
-    "./lb.core.plugins.server",
-    "./lb.core.plugins.url",
-    "./lb.core.plugins.utils"
-  ],
-  function(
-    lbCorePlugins,
-    object,
-    Sandbox,
-    css,
-    dom,
-    events,
-    i18n,
-    server,
-    url,
-    utils
-  ) {
+define([
+	"./lb.core.plugins",
+	"./lb.base.object",
+	"./lb.core.Sandbox",
+	"./lb.core.plugins.css",
+	"./lb.core.plugins.dom",
+	"./lb.core.plugins.events",
+	"./lb.core.plugins.server",
+	"./lb.core.plugins.url",
+	"./lb.core.plugins.utils"
+], function (
+	lbCorePlugins,
+	object,
+	Sandbox,
+	css,
+	dom,
+	events,
+	server,
+	url,
+	utils
+) {
+	"use strict";
 
-    // Declare alias
-    var has = object.has;
+	//	Declare alias
+	var has = object.has;
 
-    function buildSandbox(id){
-      // Function: buildSandbox(id)
-      // Build a new instance of Sandbox from parts defined by plugins.
-      //
-      // Parameter:
-      //   id - string, the identifier of the module for whom the Sandbox
-      //        instance is intended.
-      //
-      // Returns:
-      //   * null, in case the id argument is null or missing
-      //   * object, a new instance of the Sandbox otherwise
-      //
-      // Note:
-      // The module identifier may be used to customize the Sandbox methods
-      // included, e.g. to restrict usage of AJAX methods to a specific Data
-      // module, or to provide DOM manipulation methods only to User Interface
-      // modules and not to Data modules. There is no such customization done in
-      // the default Sandbox Builder, which always returns similar instances of
-      // Sandbox with the same set of methods.
-      if ( !has(id) ){
-        return null;
-      }
+	function buildSandbox(id) {
+		// Function: buildSandbox(id)
+		// Build a new instance of Sandbox from parts defined by plugins.
+		//
+		// Parameter:
+		//   id - string, the identifier of the module for whom the Sandbox
+		//        instance is intended.
+		//
+		// Returns:
+		//   * null, in case the id argument is null or missing
+		//   * object, a new instance of the Sandbox otherwise
+		//
+		// Note:
+		// The module identifier may be used to customize the Sandbox methods
+		// included, e.g. to restrict usage of AJAX methods to a specific Data
+		// module, or to provide DOM manipulation methods only to User Interface
+		// modules and not to Data modules. There is no such customization done in
+		// the default Sandbox Builder, which always returns similar instances of
+		// Sandbox with the same set of methods.
+		if (!has(id)) {
+			return null;
+		}
 
-      var sandbox = new Sandbox(id);
-      css(sandbox);
-      dom(sandbox);
-      events(sandbox);
-      i18n(sandbox);
-      server(sandbox);
-      url(sandbox);
-      utils(sandbox);
-      return sandbox;
-    }
+		var sandbox = new Sandbox(id);
+		css(sandbox);
+		dom(sandbox);
+		events(sandbox);
+		server(sandbox);
+		url(sandbox);
+		utils(sandbox);
+		return sandbox;
+	}
 
-    // Assign to lb.core.plugins.builder
-    // for backward-compatibility in browser environment
-    lbCorePlugins.builder = { // public API
-      buildSandbox: buildSandbox
-    };
-    return lbCorePlugins.builder;
-  }
-);
+	// Assign to lb.core.plugins.builder
+	// for backward-compatibility in browser environment
+	lbCorePlugins.builder = { // public API
+		buildSandbox: buildSandbox
+	};
+	
+	return lbCorePlugins.builder;
+});
