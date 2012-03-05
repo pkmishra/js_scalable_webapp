@@ -42,8 +42,7 @@ define([
 		var has = object.has,
 			getState = History.getState,
 			pushState = History.pushState,
-			replaceState = History.replaceState,
-			onStateChange = adapter.bind;
+			replaceState = History.replaceState;
 
 		function getLocation() {
 			// Function: sandbox.url.getLocation(): object
@@ -83,9 +82,8 @@ define([
 			}
 		}
 		
-		// Try and Initialise History
-		if (typeof History.init !== "undefined") {
-			History.init();
+		function onStateChange(callback) {
+			adapter.bind(window, "statechange", callback);
 		}
 
 		sandbox.url = {

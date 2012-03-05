@@ -20,10 +20,14 @@
 /*global define */
 define([
 	"./lb.core.plugins",
+	"./lb.base.array",
+	"./lb.base.dom",
 	"./lb.base.dom.css",
 	"./lb.base.log"
 ], function (
 	lbCorePlugins,
+	array,
+	dom,
 	css,
 	logModule
 ) {
@@ -41,9 +45,10 @@ define([
 		// Define aliases
 		var getId = sandbox.getId,
 			isInBox = sandbox.isInBox,
+			removeOne = array.removeOne,
 			log = logModule.print;
 
-		function addClass(element, name) {
+		function addClass(el, name) {
 			// Function: sandbox.css.addClass(element,name)
 			// Append a CSS class to a DOM element part of the box.
 			//
@@ -53,17 +58,18 @@ define([
 			//
 			// Note:
 			//   Nothing happens if element is out of the box.
+			var i, l;
 
-			if (!isInBox(element)) {
-				log('Warning: cannot add CSS class to element "' + element +
-					'" outside of box "' + getId() + '"');
-				return;
+			for (i = 0, l = el.length; i < l; i += 1) {
+				if (!isInBox(el[i])) {
+					removeOne(el, el[i]);
+				}
 			}
 
-			css.addClass(element, name);
+			css.addClass(el, name);
 		}
 
-		function removeClass(element, name) {
+		function removeClass(el, name) {
 			// Function: sandbox.css.removeClass(element,name)
 			// Remove a CSS class from a DOM element part of the box.
 			//
@@ -74,13 +80,15 @@ define([
 			// Note:
 			//   Nothing happens if element is out of the box.
 
-			if (!isInBox(element)) {
-				log('Warning: cannot remove CSS class from element "' + element +
-					'" outside of box "' + getId() + '"');
-				return;
+			var i, l;
+
+			for (i = 0, l = el.length; i < l; i += 1) {
+				if (!isInBox(el[i])) {
+					removeOne(el, el[i]);
+				}
 			}
 
-			css.removeClass(element, name);
+			css.removeClass(el, name);
 		}
 
 		sandbox.css = {

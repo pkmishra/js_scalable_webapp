@@ -77,12 +77,30 @@ define([
 			// Note:
 			//   A call to $() with no argument will return the box element, similarly
 			//   to getBox(false).
-
-			var element = dom.q(selector);
-			if (isInBox(element)) {
-				return element;
+			var el, i, l;
+			
+			selector = selector || "#" + getId();
+			
+			if (selector.charAt(0) === "#") {
+				selector = "#" + getId() + "\\." + selector.substr(1);
 			}
-			log('Warning: element "' + selector + '" not part of box "' + getId() + '"');
+			
+			el = dom.q(selector);
+			
+			for (i = 0, l = el.length; i < l; i += 1) {
+				if (!isInBox(el[i])) {
+					removeOne(el, el[i]);
+				}
+			}
+			
+			if (el.length !== l) {
+				log('Warning: Some queried elements are not part of box "' + getId() + '"');
+			}
+			
+			if (el.length) {
+				return el;
+			}
+			
 			return null;
 		}
 
@@ -110,26 +128,26 @@ define([
 		}
 
 		
-		function addListener(type, callback) {
+		function addListener(el, type, callback) {
 			var createListener = factory.createListener;
 			
-			if (!isInBox(this)) {
+			if (!isInBox(el)) {
 				log('Warning: cannot add listener to element "' + element +
 					'" outside of box "' + getId() + '"');
 				return null;
 			}
 			
 			addOne(listenerTypes, type);
-			return this.createListener(type, callback);
+			createListener(el, type, callback);
 		}
 
 		
-		function removeListener(type) {
+		function removeListener(el, type) {
 			var destroyListener = factory.destroyListener;
 			
 			removeOne(listenerTypes, type);
 			
-			return this.destroyListener(type);
+			destroyListener(el, type);
 		}
 
 		
@@ -145,6 +163,10 @@ define([
 
 		sandbox.dom = {
 			q: q,
+			each: dom.each,
+			find: dom.find,
+			parent: dom.parent,
+			attribute: dom.attribute,
 			element: element,
 			addListener: addListener,
 			removeListener: removeListener,

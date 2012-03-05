@@ -70,13 +70,41 @@ define([
 		return false;
 	}
 	
-	// Assign to lb.base.dom
-	// for backward-compatibility in browser environment
+	function each(el, callback) {
+		jQuery(el).each(callback);
+	}
 	
+	function find(el, scope) {
+		// el: element || selector
+		// scope: element || selector
+		return jQuery(scope).find(el).get();
+	}
+	
+	function parent(el, selector) {
+		return jQuery(el).parent(selector).get();
+	}
+	
+	function attribute(el, name, value) {
+		// attribute(el, name[, value])
+		
+		if (value) {
+			jQuery(el).attr(name, value);
+		
+		} else {
+			return jQuery(el).attr(name);
+		}
+	}
+	
+	// Assign to lb.base.dom
+	// for backward-compatibility in browser environmen
 	lbBase.dom = {
 		// public API
 		q: q,
-		hasAttribute: hasAttribute
+		hasAttribute: hasAttribute,
+		each: each,
+		find: find,
+		parent: parent,
+		attribute: attribute
 	};
 	
 	return lbBase.dom;

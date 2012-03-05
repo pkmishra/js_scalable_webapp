@@ -1957,5 +1957,7 @@ define([
 	// Prepare History Core for a modular architecture
 	lbBase.History = History;
 	
+	History.init();
+	
 	return lbBase.History;
 });

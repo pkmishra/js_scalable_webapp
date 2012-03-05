@@ -185,20 +185,19 @@ define([
 			// to add to base DOM API: contains(ancestorElement,descendantElement)
 			// (available as goog.dom.contains(parent,descendant) in Closure library)
 
-			var ancestor = element;
-			while (has(ancestor)) {
-				// TODO: return false when a document node is reached without passing by
-				//       the root of the box
-
-				// TODO: allow document-fragment or null as last ancestor
-				//       for nodes not/no longer part of the DOM
-
-				// box must be found in ancestors or self
-				if (ancestor === getBox(false)) {
-					return true;
-				}
-				ancestor = ancestor.parentNode;
+			var box = getBox(false),
+				child;
+			
+			if (element === box[0]) {
+				return true;
 			}
+			
+			child = dom.find(element, box);
+			
+			if (child && child.length) {
+				return true;
+			}
+			
 			return false;
 		}
 
